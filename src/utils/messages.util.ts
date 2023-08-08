@@ -2,6 +2,7 @@
 export const errors = {
     emailOrPhoneAlreadyExists: 'Email or phone number already exists',
     userNotFound: 'User not found',
+    notFound: 'Not found',
     senderNotFound: 'Sender not found',
     beneficiaryNotFound: 'Beneficiary not found',
     invalidCredentials: 'Invalid credentials',
@@ -13,10 +14,14 @@ export const errors = {
     refreshTokenUsed: "Refresh token was already used",
     invalidJwtToken: "Invalid jwt token",
     refreshTokenFailed: "Refresh token generation failed",
-    refreshTokenNotPresent: "Refresh token is not present"
+    refreshTokenNotPresent: "Refresh token is not present",
+    accountNumberGenerationFailed: "Account number generation failed",
+    validationError: 'Validation error',
+    badRequest: 'Bad request'
 };
 
 export const responses = {
+    success: 'Success',
     userRegistrationSuccess: 'User registration successful',
     loginSuccess: 'Login successful',
     transferSuccess: 'Transfer completed successfully',
@@ -24,6 +29,6 @@ export const responses = {
 };
 
 export const status = {
-    failed: false, 
+    failed: false,
     success: true,
 }

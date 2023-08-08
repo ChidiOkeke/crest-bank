@@ -1,12 +1,8 @@
 import { NextFunction, Request, RequestHandler, Response } from "express";
 import {
-  Result,
-  ValidationChain,
-  ValidationError,
   validationResult,
 } from "express-validator";
 
-import jwt from "jsonwebtoken";
 import { Tokens } from "../types/index.types";
 
 export const messageLogger = (error: string | null, success: string) => {
@@ -60,8 +56,3 @@ export const generateAccountNumber = (min:number,max:number)=> {
   return Math.floor(Math.random() * (max - min + 1)) + min;
   
 }
-
-
-
-
-

@@ -1,14 +1,12 @@
-import { autoInjectable } from 'tsyringe';
+import { injectable, inject } from 'tsyringe';
 import { NextFunction, Request, Response } from "express";
 import AuthService from "../../services/auth/auth.service";
 import { RefreshPayload } from "../../types/index.types";
 
-@autoInjectable()
+@injectable()
 class AuthController {
 
-  authService: AuthService;
-
-  constructor(authService: AuthService) {
+  constructor(@inject(AuthService) private authService: AuthService) {
     this.authService = authService;
   }
 
@@ -17,7 +15,7 @@ class AuthController {
       const { statusCode, body } = await this.authService.login(req);
 
       return res.status(statusCode).send(body);
-
+      
     } catch (error) {
       next(error);
     }

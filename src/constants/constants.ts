@@ -7,6 +7,7 @@ export const userFieldsToSelectForLogin = [
   "accountType",
   "accountStatus",
   "password",
+  "accountNumber"
 ];
 
 export const userFieldsToSelectForTransfer = [
@@ -23,3 +24,5 @@ export const userFieldsToSelectForTransfer = [
 export const accountNumberMin = 1000000000;
 
 export const accountNumberMax = 9000000000;
+
+export const maxRetries = 5;

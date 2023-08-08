@@ -1,6 +1,7 @@
 import { Model, model, Schema, Types } from "mongoose";
 import { AccountStatus, AccountType, UserRoles } from "../types/index.types";
 
+
 export interface UserModel extends Document {
   firstName: string;
   lastName: string;  
@@ -78,4 +79,9 @@ const User: Model<UserModel> = model<UserModel>(
   "User",
   UserSchema
 );
+
+export type UserModelType = Model<UserModel>;
+
 export default User;
+
+

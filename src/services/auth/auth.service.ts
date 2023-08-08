@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import { Model } from "mongoose";
-import { formatResponse } from "../../utils/index.util";
-import { userFieldsToSelectForLogin } from "../../constants/constants";
-import userModel, { UserModel } from "../../schemas/user.schema";
+import { formatResponse, generateAccountNumber } from "../../utils/index.util";
+import { accountNumberMax, accountNumberMin, maxRetries, userFieldsToSelectForLogin } from "../../constants/constants";
+import User, { UserModel, UserModelType } from "../../schemas/user.schema";
 import { matchedData } from "express-validator";
 import httpStatus from "http-status";
 import bcrypt from "bcryptjs";
@@ -10,22 +10,20 @@ import { errors, responses, status } from "../../utils/messages.util";
 import JwtService from "../../utils/jwt.util";
 import redisService from "../redis/redis.service";
 import { RefreshPayload } from "../../types/index.types";
-import { injectable } from "tsyringe";
+import { inject, injectable } from "tsyringe";
+import FormatResponse from "../../utils/responses.util";
 
 @injectable()
 class AuthService {
 
-
-  userModel: Model<UserModel>;
-
-  constructor(userModel: Model<UserModel>) {
+  constructor(@inject('UserModel') private userModel: UserModelType){
     this.userModel = userModel;
   }
-
+  
   register = async (req: Request) => {
     const userData = matchedData(req);
     const { email, phoneNumber, password } = userData;
-
+    
     try {
       const matchQuery = {
         $or: [
@@ -36,21 +34,28 @@ class AuthService {
       const emailOrPhoneExists = await this.userModel.findOne(matchQuery);
 
       if (emailOrPhoneExists) {
-        return formatResponse(httpStatus.BAD_REQUEST, errors.emailOrPhoneAlreadyExists, status.failed);
+        return FormatResponse.badRequest(errors.emailOrPhoneAlreadyExists)
       }
 
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(password, salt);
+      
+      
+      const accountNumber = await this.generateUniqueAccountNumber(maxRetries, accountNumberMin, accountNumberMax)
 
-      const user = await this.userModel.create({ ...userData, password: hashedPassword });
-      return formatResponse(httpStatus.CREATED, responses.userRegistrationSuccess, status.success, {
+      if(!accountNumber){
+        return FormatResponse.interalServerError(errors.accountNumberGenerationFailed)
+      }
+      const user = await this.userModel.create({ ...userData, password: hashedPassword, accountNumber });
+
+      return FormatResponse.created(responses.userRegistrationSuccess, {
         ...user.toObject(),
         password: hashedPassword,
-      });
+      })
 
     } catch (error) {
       console.error({ error });
-      return formatResponse(httpStatus.INTERNAL_SERVER_ERROR, errors.internalServerError, status.failed);
+      return FormatResponse.interalServerError()
     }
   }
 
@@ -63,7 +68,7 @@ class AuthService {
       let passwordOk = false;
 
       if (!user) {
-        return formatResponse(httpStatus.BAD_REQUEST, errors.userNotFound, status.failed);
+        return FormatResponse.notFound(errors.userNotFound)
       }
 
       if (user.password) {
@@ -71,18 +76,18 @@ class AuthService {
       }
 
       if (!passwordOk) {
-        return formatResponse(httpStatus.BAD_REQUEST, errors.invalidCredentials, status.failed);
+        return FormatResponse.badRequest(errors.invalidCredentials)
       }
 
       const jwtService = new JwtService()
 
       const tokens = jwtService.generate(user.email, user.id)
 
-      return formatResponse(httpStatus.OK, responses.loginSuccess, status.success, { ...user.toObject(), password: null, tokens });
+      return FormatResponse.ok(responses.loginSuccess, { ...user.toObject(), password: null, tokens } )
 
     } catch (error) {
       console.error({ error });
-      return formatResponse(httpStatus.INTERNAL_SERVER_ERROR, errors.internalServerError, status.failed);
+      return FormatResponse.interalServerError()
     }
   }
 
@@ -103,14 +108,29 @@ class AuthService {
       const tokens = jwtService.generate(email, id);
 
       if (!tokens) {
-        return formatResponse(httpStatus.INTERNAL_SERVER_ERROR, errors.refreshTokenFailed, status.failed);
+        return FormatResponse.interalServerError(errors.refreshTokenFailed)
       }
 
-      return formatResponse(httpStatus.OK, responses.refreshTokenGenerated, status.success, tokens);
+      return FormatResponse.ok(responses.refreshTokenGenerated, tokens )
 
     } catch (error) {
       console.error({ error });
-      return formatResponse(httpStatus.INTERNAL_SERVER_ERROR, errors.internalServerError, status.failed);
+      return FormatResponse.interalServerError()
+    }
+  }
+
+  generateUniqueAccountNumber = async (maxRetries: number, accountNumberMin: number, accountNumberMax: number)=>{
+    let count = 0 
+    let generatedAccountNumber = null;
+    let existingAccountNumber = null;
+
+    while(count < maxRetries){
+      generatedAccountNumber = generateAccountNumber(accountNumberMin,accountNumberMax)
+      existingAccountNumber = await this.userModel.findOne({accountNumber: generatedAccountNumber})
+      if(!existingAccountNumber){  //check if exists 
+        return generatedAccountNumber;
+      }
+      count++
     }
   }
 
