@@ -2,6 +2,8 @@
 export const errors = {
     emailOrPhoneAlreadyExists: 'Email or phone number already exists',
     userNotFound: 'User not found',
+    senderNotFound: 'Sender not found',
+    beneficiaryNotFound: 'Beneficiary not found',
     invalidCredentials: 'Invalid credentials',
     internalServerError: 'An internal server error occurred',
     noAuthorizationHeader: "No Authorization header provided",

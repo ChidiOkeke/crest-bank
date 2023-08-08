@@ -1,12 +1,20 @@
-
+import { autoInjectable } from 'tsyringe';
 import { NextFunction, Request, Response } from "express";
 import AuthService from "../../services/auth/auth.service";
 import { RefreshPayload } from "../../types/index.types";
 
+@autoInjectable()
 class AuthController {
+
+  authService: AuthService;
+
+  constructor(authService: AuthService) {
+    this.authService = authService;
+  }
+
   login = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { statusCode, body } = await AuthService.login(req);
+      const { statusCode, body } = await this.authService.login(req);
 
       return res.status(statusCode).send(body);
 
@@ -16,7 +24,7 @@ class AuthController {
   }
   register = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { statusCode, body } = await AuthService.register(req);
+      const { statusCode, body } = await this.authService.register(req);
 
       return res.status(statusCode).send(body);
 
@@ -29,9 +37,7 @@ class AuthController {
     try {
       const { email, id, refresh }: RefreshPayload = req.body
 
-      const request = { email, id, refresh }
-      
-      const {statusCode, body} = await AuthService.refresh(request);
+      const { statusCode, body } = await this.authService.refresh({email, id, refresh});
 
       return res.status(statusCode).send(body);
 
@@ -41,4 +47,4 @@ class AuthController {
   }
 }
 
-export default new AuthController();
+export default AuthController;

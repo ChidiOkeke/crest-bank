@@ -2,7 +2,7 @@ import { UserRoles } from "../types/index.types";
 
 const { RBAC } = require("rbac");
 
-export const rbacPolicy = new RBAC({
+export const rbac = new RBAC({
     roles: Object.values(UserRoles), // [CUSTOMER, BANKER, ADMIN]
     permissions: {
         ACCOUNT: ["SUSPEND", "REINSTATE"],

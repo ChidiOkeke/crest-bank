@@ -1,3 +1,5 @@
+import 'reflect-metadata';
+import { container } from 'tsyringe';
 import bodyParser from "body-parser";
 import cors from "cors";
 import { config as dotenvConfig } from "dotenv";

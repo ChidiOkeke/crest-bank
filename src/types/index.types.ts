@@ -37,3 +37,9 @@ export type Tokens = {
   access: string, 
   refresh: string 
 }
+
+export type Permissions =  {
+  role: string, 
+  action:string, 
+  subject:string
+} 

@@ -10,11 +10,19 @@ import { errors, responses, status } from "../../utils/messages.util";
 import JwtService from "../../utils/jwt.util";
 import redisService from "../redis/redis.service";
 import { RefreshPayload } from "../../types/index.types";
+import { injectable } from "tsyringe";
 
+@injectable()
 class AuthService {
-  static model: Model<UserModel> = userModel;
 
-  static register = async (req: Request) => {
+
+  userModel: Model<UserModel>;
+
+  constructor(userModel: Model<UserModel>) {
+    this.userModel = userModel;
+  }
+
+  register = async (req: Request) => {
     const userData = matchedData(req);
     const { email, phoneNumber, password } = userData;
 
@@ -25,7 +33,7 @@ class AuthService {
           { phoneNumber }
         ]
       }
-      const emailOrPhoneExists = await AuthService.model.findOne(matchQuery);
+      const emailOrPhoneExists = await this.userModel.findOne(matchQuery);
 
       if (emailOrPhoneExists) {
         return formatResponse(httpStatus.BAD_REQUEST, errors.emailOrPhoneAlreadyExists, status.failed);
@@ -34,7 +42,7 @@ class AuthService {
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(password, salt);
 
-      const user = await AuthService.model.create({ ...userData, password: hashedPassword });
+      const user = await this.userModel.create({ ...userData, password: hashedPassword });
       return formatResponse(httpStatus.CREATED, responses.userRegistrationSuccess, status.success, {
         ...user.toObject(),
         password: hashedPassword,
@@ -46,12 +54,12 @@ class AuthService {
     }
   }
 
-  static login = async (req: Request) => {
+  login = async (req: Request) => {
     const { email, password } = matchedData(req);
 
     try {
       const matchQuery = { email };
-      const user = await AuthService.model.findOne(matchQuery).select(userFieldsToSelectForLogin);
+      const user = await this.userModel.findOne(matchQuery).select(userFieldsToSelectForLogin);
       let passwordOk = false;
 
       if (!user) {
@@ -70,7 +78,7 @@ class AuthService {
 
       const tokens = jwtService.generate(user.email, user.id)
 
-      return formatResponse(httpStatus.OK, responses.loginSuccess, status.success, { ...user.toObject(), tokens });
+      return formatResponse(httpStatus.OK, responses.loginSuccess, status.success, { ...user.toObject(), password: null, tokens });
 
     } catch (error) {
       console.error({ error });
@@ -78,7 +86,7 @@ class AuthService {
     }
   }
 
-  static refresh = async ({ email, id, refresh }: RefreshPayload) => {
+  refresh = async ({ email, id, refresh }: RefreshPayload) => {
 
     try {
       const jwtRefreshTime = process.env.JWT_REFRESH_TIME as string;

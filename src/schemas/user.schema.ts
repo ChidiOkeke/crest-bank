@@ -11,6 +11,7 @@ export interface UserModel extends Document {
   accountType: string;
   accountStatus: string;
   accountBalance: number;
+  accountNumber: string;
   role: string;
 }
 
@@ -62,6 +63,12 @@ const UserSchema = new Schema(
       type: Number,
       required: true,
       default: 0,
+    },
+    accountNumber: {
+      type: String,
+      required: true,
+      default: null,
+      unique: true
     },
   },
   { timestamps: true }
