@@ -1,12 +1,10 @@
-import { Request, Response } from "express";
-import { Model } from "mongoose";
-import { formatResponse, generateAccountNumber } from "../../utils/index.util";
+import { Request } from "express";
+import { generateAccountNumber } from "../../utils/index.util";
 import { accountNumberMax, accountNumberMin, maxRetries, userFieldsToSelectForLogin } from "../../constants/constants";
-import User, { UserModel, UserModelType } from "../../schemas/user.schema";
+import { UserModel, UserModelType } from "../../schemas/user.schema";
 import { matchedData } from "express-validator";
-import httpStatus from "http-status";
 import bcrypt from "bcryptjs";
-import { errors, responses, status } from "../../utils/messages.util";
+import { errors, responses } from "../../utils/messages.util";
 import JwtService from "../../utils/jwt.util";
 import redisService from "../redis/redis.service";
 import { RefreshPayload } from "../../types/index.types";
@@ -16,14 +14,14 @@ import FormatResponse from "../../utils/responses.util";
 @injectable()
 class AuthService {
 
-  constructor(@inject('UserModel') private userModel: UserModelType){
+  constructor(@inject('UserModel') private userModel: UserModelType) {
     this.userModel = userModel;
   }
-  
+
   register = async (req: Request) => {
     const userData = matchedData(req);
     const { email, phoneNumber, password } = userData;
-    
+
     try {
       const matchQuery = {
         $or: [
@@ -39,12 +37,12 @@ class AuthService {
 
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(password, salt);
-      
-      
+
+
       const accountNumber = await this.generateUniqueAccountNumber(maxRetries, accountNumberMin, accountNumberMax)
 
-      if(!accountNumber){
-        return FormatResponse.interalServerError(errors.accountNumberGenerationFailed)
+      if (!accountNumber) {
+        return FormatResponse.internalServerError(errors.accountNumberGenerationFailed)
       }
       const user = await this.userModel.create({ ...userData, password: hashedPassword, accountNumber });
 
@@ -55,7 +53,7 @@ class AuthService {
 
     } catch (error) {
       console.error({ error });
-      return FormatResponse.interalServerError()
+      return FormatResponse.internalServerError()
     }
   }
 
@@ -83,11 +81,11 @@ class AuthService {
 
       const tokens = jwtService.generate(user.email, user.id)
 
-      return FormatResponse.ok(responses.loginSuccess, { ...user.toObject(), password: null, tokens } )
+      return FormatResponse.ok(responses.loginSuccess, { ...user.toObject(), password: null, tokens })
 
     } catch (error) {
       console.error({ error });
-      return FormatResponse.interalServerError()
+      return FormatResponse.internalServerError()
     }
   }
 
@@ -108,32 +106,52 @@ class AuthService {
       const tokens = jwtService.generate(email, id);
 
       if (!tokens) {
-        return FormatResponse.interalServerError(errors.refreshTokenFailed)
+        return FormatResponse.internalServerError(errors.refreshTokenFailed)
       }
 
-      return FormatResponse.ok(responses.refreshTokenGenerated, tokens )
+      return FormatResponse.ok(responses.refreshTokenGenerated, tokens)
 
     } catch (error) {
       console.error({ error });
-      return FormatResponse.interalServerError()
+      return FormatResponse.internalServerError()
     }
   }
 
-  generateUniqueAccountNumber = async (maxRetries: number, accountNumberMin: number, accountNumberMax: number)=>{
-    let count = 0 
+  generateUniqueAccountNumber = async (maxRetries: number, accountNumberMin: number, accountNumberMax: number) => {
+    let count = 0
     let generatedAccountNumber = null;
     let existingAccountNumber = null;
 
-    while(count < maxRetries){
-      generatedAccountNumber = generateAccountNumber(accountNumberMin,accountNumberMax)
-      existingAccountNumber = await this.userModel.findOne({accountNumber: generatedAccountNumber})
-      if(!existingAccountNumber){  //check if exists 
-        return generatedAccountNumber;
+    try {
+      while (count < maxRetries) {
+        generatedAccountNumber = generateAccountNumber(accountNumberMin, accountNumberMax)
+        existingAccountNumber = await this.userModel.findOne({ accountNumber: generatedAccountNumber })
+        if (!existingAccountNumber) {  //check if exists 
+          return generatedAccountNumber;
+        }
+        count++
       }
-      count++
+    } catch (error) {
+      console.error({ error });
+      return FormatResponse.internalServerError()
     }
+
   }
 
+  resolveUserRoles = async (userId: string) => {
+    try {
+      const user = await this.userModel.findById(userId)
+      if (!user) {
+        return false;
+      }
+      const { role } = user
+
+      return role;
+    } catch (error) {
+      console.error({ error });
+      return false
+    }
+  }
 }
 
 export default AuthService;

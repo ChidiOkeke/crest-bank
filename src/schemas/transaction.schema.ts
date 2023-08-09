@@ -1,17 +1,45 @@
-import mongoose, { Model, model, Schema, Types } from "mongoose";
-import { AccountStatus, AccountType, UserRoles } from "../types/index.types";
+import mongoose, { Model, model, Schema } from "mongoose";
+import { defaultTransferAmount } from "../constants/constants";
 
-export interface TransactionModel extends Document {
-    fromUser: string,
-    toUser: string,
-    amount: number
+export interface Transactions {
+  user: string;
+  beneficiary: string;
+  userAccountNumber:string,
+  beneficiaryAccountNumber: string,
+  amount: number;
 }
+
+export interface TransactionModel extends Transactions,Document {}
 
 const TransactionSchema = new Schema(
   {
-    fromUser: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-    toUser: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-    amount: { type: Number, required: true },
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+      default: null
+    },
+    beneficiary: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+      default: null,
+    },
+    userAccountNumber: {
+      type: String,
+      required: true,
+      default: null,
+    },
+    beneficiaryAccountNumber: {
+      type: String,
+      required: true,
+      default: null,
+    },
+    amount: {
+      type: mongoose.Schema.Types.Decimal128,
+      required: true,
+      default: defaultTransferAmount,
+    },
   },
   { timestamps: true }
 );
@@ -20,4 +48,7 @@ const Transaction: Model<TransactionModel> = model<TransactionModel>(
   "Transaction",
   TransactionSchema
 );
+
+export type TransactionModelType = Model<TransactionModel>;
+
 export default Transaction;

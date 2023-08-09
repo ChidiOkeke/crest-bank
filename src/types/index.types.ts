@@ -5,14 +5,29 @@ export enum AccountType {
 
 export enum AccountStatus {
   ACTIVE = "ACTIVE",
-  INACTIVE = "INACTIVE",
   SUSPENDED = "SUSPENDED",
+  CLOSED = "CLOSED"
 }
 
 export enum UserRoles {
   CUSTOMER = "CUSTOMER",
   BANKER = "BANKER",
   ADMIN = "ADMIN",
+}
+
+export enum AuthorizationActions {
+  CREATE = "CREATE",
+  SUSPEND = "SUPEND",
+  REINSTATE = "REINSTATE",
+  VIEW = "VIEW",
+  INITIATE = "INITIATE"
+}
+
+export enum AuthorizationPermissions {
+  ACCOUNT = "ACCOUNT",
+  BALANCE = "ACCOUNT",
+  HISTORY = "HISTORY",
+  TRANSFER = "TRANSFER"
 }
 
 export type RedisOptions = {
@@ -29,17 +44,17 @@ export type RefreshPayload = {
 };
 
 export type JwtDecodedOptions = {
-  type: string; 
-  aud: string; 
-  iss: string 
+  type: string;
+  aud: string;
+  iss: string
 };
 export type Tokens = {
-  access: string, 
-  refresh: string 
+  access: string,
+  refresh: string
 }
 
-export type Permissions =  {
-  role: string, 
-  action:string, 
-  subject:string
+export type Permissions = {
+  role: string,
+  action: string,
+  subject: string
 } 

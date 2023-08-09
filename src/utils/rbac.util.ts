@@ -1,18 +1,25 @@
 import { UserRoles } from "../types/index.types";
 
-const { RBAC } = require("rbac");
+import { RBAC } from "rbac";
 
-export const rbac = new RBAC({
+const rbacConfig = {
     roles: Object.values(UserRoles), // [CUSTOMER, BANKER, ADMIN]
     permissions: {
-        ACCOUNT: ["SUSPEND", "REINSTATE"],
+        ACCOUNT: ["CREATE", "SUSPEND", "REINSTATE"],
         BALANCE: ["VIEW"],
         HISTORY: ["VIEW"],
         TRANSFER: ["INITIATE"]
     },
     grants: {
-        CUSTOMER: ['INITTATE_TRANSFER','VIEW_BALANCE', 'VIEW_HISTORY'],
+        CUSTOMER: ['CREATE_ACCOUNT', 'INITIATE_TRANSFER','VIEW_BALANCE', 'VIEW_HISTORY'],
         BANKER: ['VIEW_BALANCE', 'VIEW_HISTORY', 'SUSPEND_ACCOUNT', 'REINSTATE_ACCOUNT'],
         ADMIN: ['BANKER'],
     },
-});
+}
+export const rbac = new RBAC(rbacConfig);
+
+
+
+
+
+

@@ -5,7 +5,7 @@ dotenvConfig({ path: ".env.dev" });
 // DB connection details
 const mongodbURI = `${process.env.MONGODB_URL}/${process.env.DB_NAME}`;
 
-// db config
+//db config
 const dbConnection = async () => {
   try {
     await mongoose.connect(mongodbURI),
@@ -13,6 +13,7 @@ const dbConnection = async () => {
         useNewUrlParser: true,
         useUnifiedTopology: true,
         useCreateIndex: true,
+        bufferCommands: false,
       };
     console.log("Connected to MongoDB");
   } catch (error) {
@@ -20,5 +21,6 @@ const dbConnection = async () => {
     throw error;
   }
 };
+
 
 export default dbConnection;

@@ -1,18 +1,24 @@
 
 
 import { Router } from "express";
-import TransactionsController from "../controllers/transactions/transactions.controller";
 import { transferValidator } from "../middlewares/validators/transactions.validator";
 import { checkRequestErrors } from "../utils/index.util";
-
+import { transactionsController } from "./containers/transactions";
+import { authMiddleware } from "./containers/auth";
+import { AuthorizationActions, AuthorizationPermissions } from "../types/index.types";
 
 const router = Router();
 
+const checkInitiateTransferPermission = authMiddleware.hasPermission(AuthorizationActions.INITIATE, AuthorizationPermissions.TRANSFER)
+
+
 router.post(
   "/transfer",
+  // authMiddleware.requiresAuth,
   transferValidator,
   checkRequestErrors,
-  TransactionsController.transfer
+  checkInitiateTransferPermission,
+  transactionsController.transfer
 );
 
 

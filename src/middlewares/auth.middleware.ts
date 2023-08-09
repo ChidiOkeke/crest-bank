@@ -2,78 +2,82 @@ import jwt from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
 import httpStatus from "http-status";
 import { errors, status } from "../utils/messages.util";
-import { rbac } from "../utils/rbac.util";
-import { Permissions } from "../types/index.types";
+import { rbac as policy } from "../utils/rbac.util";
+import AuthService from "../services/auth/auth.service";
+import { inject, injectable } from "tsyringe";
 
 
-export const requiresAuth = (req: Request, res: Response, next: NextFunction) => {
-  if (!req.headers.authorization) {
-    return res.status(httpStatus.UNAUTHORIZED).json({
-      status: status.failed,
-      message: errors.noAuthorizationHeader,
-    });
+@injectable()
+class AuthMiddleware {
+
+  rbacPolicyInitialized = false;
+
+  constructor(@inject(AuthService) private authService: AuthService) {
+    this.authService = authService;
   }
 
-  const [authorization, token] = req.headers.authorization.split(" ");
-  if (authorization !== process.env.JWT_TYPE) {
-    return res.status(httpStatus.UNAUTHORIZED).json({
-      status: status.failed,
-      message: errors.invalidAuthorizationHeader,
-    });
-  }
+  requiresAuth = (req: Request, res: Response, next: NextFunction) => {
+    if (!req.headers.authorization) {
+      return res.status(httpStatus.UNAUTHORIZED).json({
+        success: status.failed,
+        message: errors.noAuthorizationHeader,
+      });
+    }
 
-  try {
-    const secret = process.env.JWT_SECRET as string;
-    req.body.user = jwt.verify(token, secret);
+    const [authorization, token] = req.headers.authorization.split(" ");
+    if (authorization !== process.env.JWT_TYPE) {
+      return res.status(httpStatus.UNAUTHORIZED).json({
+        success: status.failed,
+        message: errors.invalidAuthorizationHeader,
+      });
+    }
 
-    return next();
-    
-  } catch (error) {
-    console.error(error)
-    return res.status(httpStatus.FORBIDDEN).json({
-      status: status.failed,
-      message: errors.authorizationError,
-    });
-  }
+    try {
+      const secret = process.env.JWT_SECRET as string;
+      req.body.user = jwt.verify(token, secret);
+
+      return next();
+    } catch (error) {
+      console.error(error);
+      return res.status(httpStatus.UNAUTHORIZED).json({
+        success: status.failed,
+        message: errors.authorizationError,
+      });
+    }
+  };
+
+  hasPermission = (action: string, asset: string) => {
+    return async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        
+
+        if(!this.rbacPolicyInitialized){ //init only once
+          await policy.init();
+          this.rbacPolicyInitialized = true;
+        }
+
+        const { user } = req.body;
+
+        const userRole = await this.authService.resolveUserRoles(user);
+
+        const can = await policy.can(userRole, action, asset);
+
+        if (can) {
+          next(); // proceed if authorized
+        } else {
+          res.status(httpStatus.FORBIDDEN).json({
+              success: status.failed,
+              message: errors.forbiddenResource
+            });
+        }
+      } catch (error) {
+        console.error({error})
+        res.status(httpStatus.FORBIDDEN).json({
+          success: status.failed,
+          message: errors.forbiddenResource
+        });
+      }
+    };
+  };
 }
-
-// export const hasPermission = (req: Request, res: Response, next: NextFunction) => {
-
-//   const { role, action, subject } = req.body;
-
-//   console.log({ role, action, subject })
-
-//   try {
-//     const can = await rbac.can(role, action, subject);
-//     if (can) {
-//       console.log('Admin is able create article');
-//     }
-//     return next();
-//   } catch (error) {
-//     return res.status(httpStatus.FORBIDDEN).json({
-//       status: status.failed,
-//       message: errors.authorizationError,
-//     });
-//   }
-// }
-
-// export const rbacMiddleware = (permissions: Permissions) => {
-//   return async (req: Request, res: Response, next: NextFunction) => {
-//     const { role, action, subject } = permissions;
-
-//     console.log({ role, action, subject })
-
-//     try {
-//       const can = await rbac.can(role, action, subject);
-//       if (can) {
-//         console.log('Admin is able create article');
-//       }
-//       return next();
-//     } catch (error) {
-//       return res.status(httpStatus.FORBIDDEN).json({
-//         status: status.failed,
-//         message: errors.authorizationError,
-//       });
-//     }
-//   }
-// };
+export default AuthMiddleware;

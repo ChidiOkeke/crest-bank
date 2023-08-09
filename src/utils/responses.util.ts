@@ -4,7 +4,7 @@ import httpStatus from 'http-status';
 
 class FormatResponse {
   
-  static created(message = responses.success,data: any,  statusCode = httpStatus.CREATED) {
+  static created(message = responses.success, data?: any,  statusCode = httpStatus.CREATED) {
     return {
       statusCode,
       body: {
@@ -15,7 +15,7 @@ class FormatResponse {
     };
   }
 
-  static ok(message = responses.success, data: any,  statusCode = httpStatus.OK) {
+  static ok(message = responses.success, data?: any,  statusCode = httpStatus.OK) {
     return {
       statusCode,
       body: {
@@ -27,7 +27,7 @@ class FormatResponse {
     };
   }
 
-  static interalServerError(message = errors.internalServerError, statusCode = httpStatus.INTERNAL_SERVER_ERROR) {
+  static internalServerError(message = errors.internalServerError, statusCode = httpStatus.INTERNAL_SERVER_ERROR) {
 
     return {
       statusCode,
