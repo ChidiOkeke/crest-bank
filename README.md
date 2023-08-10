@@ -1,6 +1,6 @@
 # Crest Bank API
 
-Welcome to the Crest Bank API project! This repository contains the source code for a basic banking API built using Express.js and MongoDB, with JWT-based authentication and authorization.
+Welcome to the Crest Bank API! This repository contains the source code for a basic banking API built using Express.js and MongoDB, with JWT-based authentication and authorization.
 
 ## Getting Started
 
@@ -21,12 +21,15 @@ Before you begin, ensure you have the following installed:
    ```bash
    git clone https://github.com/ChidiOkeke/crest-bank.git
 
-   cd crest-bank-api
+   cd crest-bank
 
    ```
 
 2. Install dependencies:
+
+   ```sh
    yarn install
+   ```
 
 3. Create a .env.dev fnd .env.dist files in the root directory and set your environment variables. You can use the .env.example file as a reference.
 
