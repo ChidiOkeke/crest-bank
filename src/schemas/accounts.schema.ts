@@ -27,7 +27,9 @@ const AccountSchema = new Schema(
       required: true,
       default: null,
     },
-    accountType: { type: String, required: true, default: null },
+    
+    accountType: { type: String,  enum: AccountType, required: true, default: AccountType.INDIVIDUAL },
+
     accountBalance: {
       type: mongoose.Schema.Types.Decimal128,
       required: true,

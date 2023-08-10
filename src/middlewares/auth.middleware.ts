@@ -63,6 +63,7 @@ class AuthMiddleware {
         const can = await policy.can(userRole, action, asset);
 
         if (can) {
+          req.body.role = userRole;
           next(); // proceed if authorized
         } else {
           res.status(httpStatus.FORBIDDEN).json({

@@ -2,9 +2,8 @@ import Transaction, { TransactionModelType } from "../../schemas/transaction.sch
 import { container } from "tsyringe";
 import TransactionsService from "../../services/transactions/transactions.service";
 import TransactionsController from "../../controllers/transactions/transactions.controller";
-import User from "../../schemas/user.schema";
 import Account, { AccountModelType } from "../../schemas/accounts.schema";
-import mongoose, {Connection}  from "mongoose";
+import mongoose, { Connection } from "mongoose";
 
 //container registration
 container.register<TransactionsController>(TransactionsController, {
@@ -18,8 +17,8 @@ container.register<TransactionModelType>('TransactionModel', { useFactory: () =>
 container.register<AccountModelType>('AccountModel', { useFactory: () => Account });
 
 container.register<Connection>('MongooseConnection', {
-    useFactory: () => mongoose.connection, // Assuming you've already connected
-  });
-  
+    useFactory: () => mongoose.connection,
+});
+
 
 export const transactionsController = container.resolve(TransactionsController)

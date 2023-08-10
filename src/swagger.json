@@ -1,0 +1,611 @@
+{
+	"openapi": "3.0.0",
+	"info": {
+		"title": "User Registration API",
+		"description": "API for registering users",
+		"version": "1.0.0"
+	},
+	"servers": [
+		{
+			"url": "//localhost:3000/api"
+		}
+	],
+	"paths": {
+		"/v1/auth/register": {
+			"post": {
+				"summary": "Register a new user",
+				"description": "Registers a new user with the provided information.",
+				"tags": [
+					"Auth"
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UserRegistration"
+							},
+							"examples": {
+								"Customer Account": {
+									"value": {
+										"firstName": "Michael",
+										"lastName": "Peterson",
+										"email": "customer@example.com",
+										"password": "@Mike5678+",
+										"phoneNumber": "2349023454388",
+										"businessName": "Mike's Apparel",
+										"role": "CUSTOMER"
+									}
+								},
+								"Banker Account": {
+									"value": {
+										"firstName": "Michael",
+										"lastName": "Peterson",
+										"email": "banker@example.com",
+										"password": "@Mike5678+",
+										"phoneNumber": "2349023454389",
+										"businessName": "Mike's Apparel",
+										"role": "BANKER"
+									}
+								},
+								"Admin Account": {
+									"value": {
+										"firstName": "Michael",
+										"lastName": "Peterson",
+										"email": "admin@example.com",
+										"password": "@Mike5678+",
+										"phoneNumber": "2349023454380",
+										"businessName": "Mike's Apparel",
+										"role": "ADMIN"
+									}
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"201": {
+						"description": "User registered successfully.",
+						"content": {
+							"application/json": {
+								"example": {
+									"success": true,
+									"message": "User registration successful."
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad request. Invalid input or missing fields.",
+						"content": {
+							"application/json": {
+								"example": {
+									"success": false,
+									"message": "Invalid credentials"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"example": {
+									"success": false,
+									"message": "Authorization Error"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"example": {
+									"success": false,
+									"message": "Forbidden resource"
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Unprocessable entity",
+						"content": {
+							"application/json": {
+								"example": {
+									"success": false,
+									"message": "Invalid body request"
+								}
+							}
+						}
+					},
+					"429": {
+						"description": "Too many requests",
+						"content": {
+							"application/json": {
+								"example": {
+									"success": false,
+									"message": "Rate limit exceeded. Please wait and try again later."
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal server error.",
+						"content": {
+							"application/json": {
+								"example": {
+									"success": false,
+									"message": "Internal server error."
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/v1/auth/login": {
+			"post": {
+				"summary": "Login a user",
+				"description": "Logs in a user with the provided credentials.",
+				"tags": [
+					"Auth"
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UserLogin"
+							},
+							"examples": {
+								"Customer Login": {
+									"value": {
+										"email": "customer@example.com",
+										"password": "@Mike5678+"
+									}
+								},
+								"Banker Login": {
+									"value": {
+										"email": "banker@example.com",
+										"password": "@Mike5678+"
+									}
+								},
+								"Admin Login": {
+									"value": {
+										"email": "admin@example.com",
+										"password": "@Mike5678+"
+									}
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "User logged in successfully.",
+						"content": {
+							"application/json": {
+								"example": {
+									"success": true,
+									"message": "Login successful",
+									"data": {
+										"_id": "64d3eee57125bc5ce5f6a7ee",
+										"email": "customer@example.com",
+										"password": null,
+										"phoneNumber": "2349023454388",
+										"firstName": "Michael",
+										"lastName": "Peterson",
+										"businessName": "Mike's Apparel",
+										"tokens": {
+											"access": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0ZDNlZWU1NzEyNWJjNWNlNWY2YTdlZSIsInR5cGUiOiJBQ0NFU1MiLCJpYXQiOjE2OTE2NTE3MzAsImV4cCI6MTY5MTY1MjYzMCwiYXVkIjoiQVBJIiwiaXNzIjoiQ1JFU1QiLCJzdWIiOiJjdXN0b21lckBleGFtcGxlLmNvbSJ9.f29bvtxdae3Pc-jcO_uoaZj7fmgiPkHU2XLLV5iulm4",
+											"refresh": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0ZDNlZWU1NzEyNWJjNWNlNWY2YTdlZSIsInR5cGUiOiJSRUZSRVNIIiwiaWF0IjoxNjkxNjUxNzMwLCJleHAiOjE2OTE4MjQ1MzAsImF1ZCI6IkFQSSIsImlzcyI6IkNSRVNUIiwic3ViIjoiY3VzdG9tZXJAZXhhbXBsZS5jb20ifQ.H9BJKGQcz40eve1086m_MyFuCIhJ6Fw2yjvbjuZbgfE"
+										}
+									}
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad request. Invalid input or missing fields.",
+						"content": {
+							"application/json": {
+								"example": {
+									"success": false,
+									"message": "Invalid credentials"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"example": {
+									"success": false,
+									"message": "Authorization Error"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"example": {
+									"success": false,
+									"message": "Forbidden resource"
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Unprocessable entity",
+						"content": {
+							"application/json": {
+								"example": {
+									"success": false,
+									"message": "Invalid body request"
+								}
+							}
+						}
+					},
+					"429": {
+						"description": "Too many requests",
+						"content": {
+							"application/json": {
+								"example": {
+									"success": false,
+									"message": "Rate limit exceeded. Please wait and try again later."
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal server error.",
+						"content": {
+							"application/json": {
+								"example": {
+									"success": false,
+									"message": "Internal server error."
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/v1/auth/refresh": {
+			"post": {
+				"summary": "Refresh token",
+				"description": "Generate new refresh token",
+				"tags": [
+					"Auth"
+				],
+				"requestBody": {
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"email": {
+										"type": "string",
+										"example": "customer@example.com"
+									},
+									"refresh": {
+										"type": "string",
+										"example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0ZDIzMzRkMjAyMmM4ZGM5MzY3Njk1OSIsInR5cGUiOiJSRUZSRVNIIiwiaWF0IjoxNjkxNTg1OTI0LCJleHAiOjE2OTE3NTg3MjQsImF1ZCI6IkFQSSIsImlzcyI6IkNSRVNUIiwic3ViIjoiY2hpZGlAZ21haS5jb20ifQ.ngUOB8o_7ykfrTf0tqAGNNDjumT0KFuU8nqfbfe5Lo0"
+									}
+								},
+								"required": [
+									"email",
+									"refresh"
+								]
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Refresh token generated",
+						"content": {
+							"application/json": {
+								"example": {
+									"success": true,
+									"message": "Successfully generated refresh token",
+									"data": {
+										"access": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0eXBlIjoiQUNDRVNTIiwiaWF0IjoxNjkxNjUxNzYzLCJleHAiOjE2OTE2NTI2NjMsImF1ZCI6IkFQSSIsImlzcyI6IkNSRVNUIiwic3ViIjoiY3VzdG9tZXJAZXhhbXBsZS5jb20ifQ.vodFqG9Orfz0ynRPuBKoQnr4e-LtmE2H6pSZyH_G7WU",
+										"refresh": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0eXBlIjoiUkVGUkVTSCIsImlhdCI6MTY5MTY1MTc2MywiZXhwIjoxNjkxODI0NTYzLCJhdWQiOiJBUEkiLCJpc3MiOiJDUkVTVCIsInN1YiI6ImN1c3RvbWVyQGV4YW1wbGUuY29tIn0.GAyGiHbDpsIKPu8Mp1hD6vES1PMbHkZq0gKDBxFOlvg"
+									}
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad request. Invalid input or missing fields.",
+						"content": {
+							"application/json": {
+								"example": {
+									"success": false,
+									"message": "Invalid credentials"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"example": {
+									"success": false,
+									"message": "Authorization Error"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"example": {
+									"success": false,
+									"message": "Forbidden resource"
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Unprocessable entity",
+						"content": {
+							"application/json": {
+								"example": {
+									"success": false,
+									"message": "Invalid body request"
+								}
+							}
+						}
+					},
+					"429": {
+						"description": "Too many requests",
+						"content": {
+							"application/json": {
+								"example": {
+									"success": false,
+									"message": "Rate limit exceeded. Please wait and try again later."
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal server error.",
+						"content": {
+							"application/json": {
+								"example": {
+									"success": false,
+									"message": "Internal server error."
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/v1/accounts/": {
+			"post": {
+				"summary": "Create an account for a user",
+				"description": "Create an account for a user",
+				"tags": [
+					"Accounts"
+				],
+				"requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Account"
+                            },
+                            "examples": {
+                                "Create Account": {
+                                  "value": {
+                                    "user": "64d3eee57125bc5ce5f6a7ee",
+                                    "accountType": "INDIVIDUAL",
+                                    "accountBalance": "30000000",
+                                    "accountStatus": "ACTIVE"
+                                  }
+                                }
+                              }
+                        }
+                    }
+                },
+				"responses": {
+					"201": {
+						"description": "Account creation",
+						"content": {
+							"application/json": {
+								"example": {
+									"success": true,
+									"message": "Account creation successful",
+									"data": {
+									  "accountNumber": "1001414891",
+									  "user": "64d3eee57125bc5ce5f6a7ee",
+									  "accountType": "INDIVIDUAL",
+									  "accountBalance": {
+										"$numberDecimal": "30000000"
+									  },
+									  "accountStatus": "ACTIVE",
+									  "_id": "64d494bf2c4e721f56b298af",
+									  "createdAt": "2023-08-10T07:41:51.765Z",
+									  "updatedAt": "2023-08-10T07:41:51.765Z",
+									  "__v": 0
+									}
+								  }
+							}
+						}
+					},
+					"400": {
+						"description": "Bad request. Invalid input or missing fields.",
+						"content": {
+							"application/json": {
+								"example": {
+									"success": false,
+									"message": "Invalid credentials"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"example": {
+									"success": false,
+									"message": "Authorization Error"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"example": {
+									"success": false,
+									"message": "Forbidden resource"
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Unprocessable entity",
+						"content": {
+							"application/json": {
+								"example": {
+									"success": false,
+									"message": "Invalid body request"
+								}
+							}
+						}
+					},
+					"429": {
+						"description": "Too many requests",
+						"content": {
+							"application/json": {
+								"example": {
+									"success": false,
+									"message": "Rate limit exceeded. Please wait and try again later."
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal server error.",
+						"content": {
+							"application/json": {
+								"example": {
+									"success": false,
+									"message": "Internal server error."
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	},
+	"components": {
+		"schemas": {
+			"UserRegistration": {
+				"type": "object",
+				"properties": {
+					"firstName": {
+						"type": "string"
+					},
+					"lastName": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string",
+						"format": "email"
+					},
+					"password": {
+						"type": "string"
+					},
+					"phoneNumber": {
+						"type": "string"
+					},
+					"businessName": {
+						"type": "string"
+					},
+					"role": {
+						"type": "string",
+						"enum": [
+							"BANKER",
+							"CUSTOMER",
+							"ADMIN"
+						]
+					}
+				},
+				"required": [
+					"firstName",
+					"lastName",
+					"email",
+					"password",
+					"phoneNumber",
+					"businessName",
+					"role"
+				]
+			},
+			"UserLogin": {
+				"type": "object",
+				"properties": {
+					"email": {
+						"type": "string",
+						"format": "email"
+					},
+					"password": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"email",
+					"password"
+				]
+			},
+			"Account": {
+				"type": "object",
+				"properties": {
+					"user": {
+						"type": "string",
+						"format": "uuid",
+						"example": "64d3eee57125bc5ce5f6a7ee"
+					},
+					"accountType": {
+						"type": "string",
+						"enum": [
+							"INDIVIDUAL",
+							"BUSINESS"
+						],
+						"example": "INDIVIDUAL"
+					},
+					"accountBalance": {
+						"type": "number",
+						"example": 100
+					},
+					"accountStatus": {
+						"type": "string",
+						"enum": [
+							"ACTIVE",
+							"INACTIVE"
+						],
+						"example": "ACTIVE"
+					}
+				},
+				"required": [
+					"user",
+					"accountType",
+					"accountBalance",
+					"accountStatus"
+				]
+			}
+		}
+	}
+}

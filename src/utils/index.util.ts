@@ -2,12 +2,11 @@ import { NextFunction, Request, RequestHandler, Response } from "express";
 import {
   validationResult,
 } from "express-validator";
-
-import { Tokens } from "../types/index.types";
+import { AccountStatus, Tokens } from "../types/index.types";
 import { minimumAllowedBalanceForTransfers } from "../constants/constants";
-import { UserModel } from "../schemas/user.schema";
-import { errors, responses } from "./messages.util";
-import { AccountModel, AccountModelType } from "../schemas/accounts.schema";
+import { errors } from "./messages.util";
+import { AccountModel } from "../schemas/accounts.schema";
+import httpStatus from "http-status";
 
 export const messageLogger = (error: string | null, success: string) => {
   if (error) {
@@ -46,11 +45,11 @@ export const checkRequestErrors: RequestHandler = (
   if (result.isEmpty()) {
     return next();
   }
-  res.status(422).send({
+  res.status(httpStatus.UNPROCESSABLE_ENTITY).send({
     errors: result.array(),
     error: true,
-    statusCode: 422,
-    message: "Invalid body request",
+    statusCode: httpStatus.UNPROCESSABLE_ENTITY,
+    message: errors.invalidBodyRequest,
   });
 };
 ;
@@ -70,7 +69,7 @@ export const differentAccountNumbers = (senderAccountNumber: string, beneficiary
 
 export const sufficientAccountBalance = (accountBalance: number, transferAmount: number) => {
 
-  console.log({accountBalance, transferAmount})
+  console.log({ accountBalance, transferAmount })
   const sufficientBalanceToTransfer = accountBalance >= transferAmount
 
   if (sufficientBalanceToTransfer) {
@@ -97,37 +96,49 @@ export const isPositiveNumber = (amount: number) => {
   return false;
 }
 
-export const canTransfer = (sender: AccountModel, beneficiary: AccountModel, transferAmount: number) => {   
+export const isAccountActive = (accountStatus:string)=>{
+  
+  if(accountStatus!== AccountStatus.ACTIVE){
+    return false
+  }
+  return true;
+}
+export const canTransfer = (sender: AccountModel, beneficiary: AccountModel, transferAmount: number) => {
 
 
-  const {accountNumber: senderAccountNumber, accountBalance} = sender;
-  const {accountNumber: beneficiaryAccountNumber} = beneficiary;
+  const { accountNumber: senderAccountNumber, accountBalance, accountStatus } = sender;
+  const { accountNumber: beneficiaryAccountNumber } = beneficiary;
 
   const differentAccounts = differentAccountNumbers(senderAccountNumber, beneficiaryAccountNumber);
   const aboveMinimumAccountBalance = accountBalanceAboveMinimum(accountBalance);
   const sufficentFunds = sufficientAccountBalance(accountBalance, transferAmount);
   const positiveNumber = isPositiveNumber(transferAmount);
+  const accountActive = isAccountActive(accountStatus)
 
-
-  if(!positiveNumber){
+  if(!accountActive){
+    return {
+      error: errors.inactiveAccount,
+    }
+  }
+  if (!positiveNumber) {
     return {
       error: errors.invalidAmount,
     }
   }
 
-  if(!differentAccounts){
+  if (!differentAccounts) {
     return {
       error: errors.sameAccountNumber,
     }
   }
 
-  if(!aboveMinimumAccountBalance){
+  if (!aboveMinimumAccountBalance) {
     return {
       error: errors.accountBalanceBelowMinimum,
     }
   }
 
-  if(!sufficentFunds){
+  if (!sufficentFunds) {
     return {
       error: errors.insufficientFunds,
     }
@@ -137,3 +148,10 @@ export const canTransfer = (sender: AccountModel, beneficiary: AccountModel, tra
     errors: null
   }
 };
+
+export const totalPages = (totalRecords: number, limit: number) => {
+  if (totalRecords > 0) {
+    return Math.ceil(totalRecords / limit)
+  }
+  return 0;
+}

@@ -1,7 +1,7 @@
 
 
 import { Router } from "express";
-import { transferValidator } from "../middlewares/validators/transactions.validator";
+import { historyValidator, transferValidator } from "../middlewares/validators/transactions.validator";
 import { checkRequestErrors } from "../utils/index.util";
 import { transactionsController } from "./containers/transactions";
 import { authMiddleware } from "./containers/auth";
@@ -10,6 +10,7 @@ import { AuthorizationActions, AuthorizationPermissions } from "../types/index.t
 const router = Router();
 
 const checkInitiateTransferPermission = authMiddleware.hasPermission(AuthorizationActions.INITIATE, AuthorizationPermissions.TRANSFER)
+const checkViewTransactionHistoryPermission = authMiddleware.hasPermission(AuthorizationActions.VIEW, AuthorizationPermissions.HISTORY)
 
 
 router.post(
@@ -19,6 +20,15 @@ router.post(
   checkRequestErrors,
   checkInitiateTransferPermission,
   transactionsController.transfer
+);
+
+router.get(
+  "/history",
+  // authMiddleware.requiresAuth,
+  historyValidator,
+  checkRequestErrors,
+  checkViewTransactionHistoryPermission,
+  transactionsController.transactionHistory
 );
 
 

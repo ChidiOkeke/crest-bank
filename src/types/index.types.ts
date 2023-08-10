@@ -58,3 +58,8 @@ export type Permissions = {
   action: string,
   subject: string
 } 
+export type TransactionHistoryQuery = {
+  user?: string,
+  userAccountNumber:string,
+  beneficiaryAccountNumber:string,
+} 

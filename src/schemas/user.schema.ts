@@ -9,10 +9,6 @@ export interface UserModel extends Document {
   phoneNumber: string;
   password: string;
   businessName?: string;
-  accountType: string;
-  accountStatus: string;
-  accountBalance: number;
-  accountNumber: string;
   role: string;
 }
 
@@ -28,48 +24,32 @@ const UserSchema = new Schema(
       required: true,
       type: String,
       unique: true,
-    },
-    accountType: {
-      type: String,
-      enum: AccountType,
-      required: true,
+      default: null,
     },
     password: {
       type: String,
       required: true,
+      default: null
     },
     phoneNumber: {
       type: String,
       required: true,
+      default: null,
     },
     firstName: {
       type: String,
       required: true,
+      default: null,
     },
     lastName: {
       type: String,
       required: true,
+      default: null,
     },
     businessName: {
       type: String,
       required: false,
       default: null,
-    },
-    accountStatus: {
-      type: String,
-      enum: AccountStatus,
-      default: AccountStatus.ACTIVE,
-    },
-    accountBalance: {
-      type: Number,
-      required: true,
-      default: 0,
-    },
-    accountNumber: {
-      type: String,
-      required: true,
-      default: null,
-      unique: true
     },
   },
   { timestamps: true }

@@ -1,15 +1,13 @@
 import mongoose, { Model, model, Schema } from "mongoose";
 import { defaultTransferAmount } from "../constants/constants";
 
-export interface Transactions {
+export interface TransactionModel extends Document {
   user: string;
   beneficiary: string;
   userAccountNumber:string,
   beneficiaryAccountNumber: string,
   amount: number;
 }
-
-export interface TransactionModel extends Transactions,Document {}
 
 const TransactionSchema = new Schema(
   {

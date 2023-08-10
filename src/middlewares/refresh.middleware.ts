@@ -1,5 +1,4 @@
 import jwt from "jsonwebtoken";
-import { ServerError } from "../utils/serverError.util.js";
 import redisService from "../services/redis/redis.service.js";
 import { NextFunction, Request, Response } from "express";
 import httpStatus from "http-status";

@@ -1,7 +1,7 @@
 import { Request } from "express";
 import { generateAccountNumber } from "../../utils/index.util";
 import { accountNumberMax, accountNumberMin, maxRetries, userFieldsToSelectForLogin } from "../../constants/constants";
-import { UserModel, UserModelType } from "../../schemas/user.schema";
+import { UserModelType } from "../../schemas/user.schema";
 import { matchedData } from "express-validator";
 import bcrypt from "bcryptjs";
 import { errors, responses } from "../../utils/messages.util";
@@ -38,17 +38,11 @@ class AuthService {
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(password, salt);
 
-
-      const accountNumber = await this.generateUniqueAccountNumber(maxRetries, accountNumberMin, accountNumberMax)
-
-      if (!accountNumber) {
-        return FormatResponse.internalServerError(errors.accountNumberGenerationFailed)
-      }
-      const user = await this.userModel.create({ ...userData, password: hashedPassword, accountNumber });
+      const user = await this.userModel.create({ ...userData, password: hashedPassword });
 
       return FormatResponse.created(responses.userRegistrationSuccess, {
         ...user.toObject(),
-        password: hashedPassword,
+        password: null,
       })
 
     } catch (error) {

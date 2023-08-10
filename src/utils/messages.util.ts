@@ -27,7 +27,9 @@ export const errors = {
     senderAccountNotFound: 'Sender account not found',
     beneficiaryAccountNotFound: 'Beneficiary account not found',
     invalidAmount: 'Invalid transfer amount',
-    transactionFailed: 'Transaction failed'
+    transactionFailed: 'Transaction failed',
+    invalidBodyRequest: 'Invalid body request',
+    inactiveAccount: 'This account is not enabled for this transaction'
 };
 
 export const responses = {
@@ -37,7 +39,8 @@ export const responses = {
     transferSuccess: 'Transfer completed successfully',
     refreshTokenGenerated: 'Successfully generated refresh token',
     accountCreationSuccess: 'Account creation successful',
-    rateLimitExceeded: 'Rate limit exceeded. Please wait and try again later.'
+    rateLimitExceeded: 'Rate limit exceeded. Please wait and try again later.',
+    transactionHistorySuccess: 'Successfully fetched transaction history',
 };
 
 export const status = {

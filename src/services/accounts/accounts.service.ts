@@ -44,13 +44,46 @@ class AccountsService {
 				return FormatResponse.internalServerError(errors.accountCreationFailed)
 			}
 
-			return FormatResponse.created(responses.accountCreationSuccess)
+			return FormatResponse.created(responses.accountCreationSuccess, accountCreated)
 
 		} catch (error) {
 			console.error({ error });
 			return FormatResponse.internalServerError()
 		}
 	}
+
+	deposit = async (req: Request) => {
+		const transactionData = matchedData(req);
+		const { accountNumber, accountBalance, ...rest } = transactionData;
+		const accountBalanceDecimal = mongoose.Types.Decimal128.fromString(accountBalance);
+
+		try {
+
+			const accountNumberExists = await this.accountModel.findOne({ accountNumber });
+
+			if (accountNumberExists) {
+				return FormatResponse.badRequest(errors.accountNumberExists)
+			}
+
+			const newAccountNumber = await this.generateUniqueAccountNumber(maxRetries, accountNumberMin, accountNumberMax)
+
+			if (!newAccountNumber) {
+				return FormatResponse.internalServerError(errors.accountNumberGenerationFailed)
+			}
+			const accountCreated = await this.accountModel.create({ ...rest, accountNumber: newAccountNumber, accountBalance: accountBalanceDecimal });
+
+			if (!accountCreated) {
+				return FormatResponse.internalServerError(errors.accountCreationFailed)
+			}
+
+			return FormatResponse.created(responses.accountCreationSuccess, accountCreated)
+
+		} catch (error) {
+			console.error({ error });
+			return FormatResponse.internalServerError()
+		}
+	}
+
 
 
 	generateUniqueAccountNumber = async (maxRetries: number, accountNumberMin: number, accountNumberMax: number) => {

@@ -9,7 +9,6 @@ class AccountsController {
   constructor(@inject(AccountsService) private accountsService: AccountsService) {
     this.accountsService = accountsService;
   }
-  
 
   create = async (req: Request, res: Response, next: NextFunction) => {
     try {
