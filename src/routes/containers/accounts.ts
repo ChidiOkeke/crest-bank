@@ -1,4 +1,4 @@
-import Accounts, { AccountModelType } from "../../schemas/accounts.schema";
+import Accounts, { AccountModelType } from "../schemas/accounts.schema";
 import { container } from "tsyringe";
 import AccountsService from "../../services/accounts/accounts.service";
 import AccountsController from "../../controllers/accounts/accounts.controller";

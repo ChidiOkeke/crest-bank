@@ -1,7 +1,7 @@
 import { Request } from "express";
 import { generateAccountNumber } from "../../utils/index.util";
 import { accountNumberMax, accountNumberMin, maxRetries, userFieldsToSelectForLogin } from "../../constants/constants";
-import { UserModelType } from "../../schemas/user.schema";
+import { UserModelType } from "../../routes/schemas/user.schema";
 import { matchedData } from "express-validator";
 import bcrypt from "bcryptjs";
 import { errors, responses } from "../../utils/messages.util";

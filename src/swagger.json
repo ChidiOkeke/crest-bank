@@ -282,6 +282,11 @@
 				"tags": [
 					"Auth"
 				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
 				"requestBody": {
 					"content": {
 						"application/json": {
@@ -392,30 +397,35 @@
 		},
 		"/v1/accounts/": {
 			"post": {
-				"summary": "Create an account for a user",
-				"description": "Create an account for a user",
+				"summary": "Create a bank account for a user",
+				"description": "Create a bank account for a user",
 				"tags": [
 					"Accounts"
 				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
 				"requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/Account"
-                            },
-                            "examples": {
-                                "Create Account": {
-                                  "value": {
-                                    "user": "64d3eee57125bc5ce5f6a7ee",
-                                    "accountType": "INDIVIDUAL",
-                                    "accountBalance": "30000000",
-                                    "accountStatus": "ACTIVE"
-                                  }
-                                }
-                              }
-                        }
-                    }
-                },
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/Account"
+							},
+							"examples": {
+								"Create Account": {
+									"value": {
+										"user": "64d3eee57125bc5ce5f6a7ee",
+										"accountType": "INDIVIDUAL",
+										"accountBalance": "30000000",
+										"accountStatus": "ACTIVE"
+									}
+								}
+							}
+						}
+					}
+				},
 				"responses": {
 					"201": {
 						"description": "Account creation",
@@ -425,19 +435,19 @@
 									"success": true,
 									"message": "Account creation successful",
 									"data": {
-									  "accountNumber": "1001414891",
-									  "user": "64d3eee57125bc5ce5f6a7ee",
-									  "accountType": "INDIVIDUAL",
-									  "accountBalance": {
-										"$numberDecimal": "30000000"
-									  },
-									  "accountStatus": "ACTIVE",
-									  "_id": "64d494bf2c4e721f56b298af",
-									  "createdAt": "2023-08-10T07:41:51.765Z",
-									  "updatedAt": "2023-08-10T07:41:51.765Z",
-									  "__v": 0
+										"accountNumber": "1001414891",
+										"user": "64d3eee57125bc5ce5f6a7ee",
+										"accountType": "INDIVIDUAL",
+										"accountBalance": {
+											"$numberDecimal": "30000000"
+										},
+										"accountStatus": "ACTIVE",
+										"_id": "64d494bf2c4e721f56b298af",
+										"createdAt": "2023-08-10T07:41:51.765Z",
+										"updatedAt": "2023-08-10T07:41:51.765Z",
+										"__v": 0
 									}
-								  }
+								}
 							}
 						}
 					},
@@ -509,9 +519,294 @@
 					}
 				}
 			}
+		},
+		"/v1/transactions/transfer": {
+			"post": {
+				"summary": "Transfer funds between bank accounts",
+				"description": "Transfer funds between bank accounts",
+				"tags": [
+					"Transactions"
+				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"requestBody": {
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/Transaction"
+							},
+							"examples": {
+								"Transfer funds": {
+									"value": {
+										"user": "64d3eee57125bc5ce5f6a7ee",
+										"beneficiary": "64d3eee57125bc5ce5f6a7ee",
+										"userAccountNumber": "5869945965",
+										"beneficiaryAccountNumber": "4632034279",
+										"amount": "350000"
+									}
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Account creation",
+						"content": {
+							"application/json": {
+								"example": {
+									"success": true,
+									"message": "Transfer completed successfully"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Insufficient funds",
+						"content": {
+							"application/json": {
+								"example": {
+									"success": false,
+									"message": "Insufficient funds"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"example": {
+									"success": false,
+									"message": "Authorization Error"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"example": {
+									"success": false,
+									"message": "Forbidden resource"
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Unprocessable entity",
+						"content": {
+							"application/json": {
+								"example": {
+									"success": false,
+									"message": "Invalid body request"
+								}
+							}
+						}
+					},
+					"429": {
+						"description": "Too many requests",
+						"content": {
+							"application/json": {
+								"example": {
+									"success": false,
+									"message": "Rate limit exceeded. Please wait and try again later."
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal server error.",
+						"content": {
+							"application/json": {
+								"example": {
+									"success": false,
+									"message": "Internal server error."
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/v1/transactions/history": {
+			"post": {
+				"summary": "Get transaction history",
+				"description": "Get account transaction history for account",
+				"tags": [
+					"Transactions"
+				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"parameters": [
+					{
+						"name": "page",
+						"in": "query",
+						"schema": {
+							"type": "integer",
+							"example": 1
+						},
+						"description": "Page number for pagination"
+					},
+					{
+						"name": "limit",
+						"in": "query",
+						"schema": {
+							"type": "integer",
+							"example": 10
+						},
+						"description": "Number of items per page"
+					}
+				],
+				"requestBody": {
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/Transaction"
+							},
+							"examples": {
+								"Transaction History": {
+									"value": {
+										"user": "64d48967383350f2c06d857d",
+										"userAccountNumber": "5869945965",
+										"beneficiaryAccountNumber": "4632034279"
+									}
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Account creation",
+						"content": {
+							"application/json": {
+								"example": {
+									"success": true,
+									"message": "Successfully fetched transaction history",
+									"page": 1,
+									"limit": 10,
+									"total": 3,
+									"totalPages": 1,
+									"data": [
+										{
+											"_id": "64d48818e3502fb7c99a3420",
+											"user": "64d3eee57125bc5ce5f6a7ee",
+											"beneficiary": "64d3eee57125bc5ce5f6a7ee",
+											"userAccountNumber": "5869945965",
+											"beneficiaryAccountNumber": "4632034279",
+											"amount": {
+												"$numberDecimal": "1"
+											},
+											"createdAt": "2023-08-10T06:47:52.506Z",
+											"updatedAt": "2023-08-10T06:47:52.506Z",
+											"__v": 0
+										},
+										{
+											"_id": "64d491e47ebaf3147e4c72af",
+											"user": "64d3eee57125bc5ce5f6a7ee",
+											"beneficiary": "64d3eee57125bc5ce5f6a7ee",
+											"userAccountNumber": "5869945965",
+											"beneficiaryAccountNumber": "4632034279",
+											"amount": {
+												"$numberDecimal": "1"
+											},
+											"createdAt": "2023-08-10T07:29:40.342Z",
+											"updatedAt": "2023-08-10T07:29:40.342Z",
+											"__v": 0
+										},
+										{
+											"_id": "64d4977e96f3097a9121a464",
+											"user": "64d3eee57125bc5ce5f6a7ee",
+											"beneficiary": "64d3eee57125bc5ce5f6a7ee",
+											"userAccountNumber": "5869945965",
+											"beneficiaryAccountNumber": "4632034279",
+											"amount": {
+												"$numberDecimal": "1"
+											},
+											"createdAt": "2023-08-10T07:53:34.053Z",
+											"updatedAt": "2023-08-10T07:53:34.053Z",
+											"__v": 0
+										}
+									]
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized",
+						"content": {
+							"application/json": {
+								"example": {
+									"success": false,
+									"message": "Authorization Error"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"example": {
+									"success": false,
+									"message": "Forbidden resource"
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Unprocessable entity",
+						"content": {
+							"application/json": {
+								"example": {
+									"success": false,
+									"message": "Invalid body request"
+								}
+							}
+						}
+					},
+					"429": {
+						"description": "Too many requests",
+						"content": {
+							"application/json": {
+								"example": {
+									"success": false,
+									"message": "Rate limit exceeded. Please wait and try again later."
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal server error.",
+						"content": {
+							"application/json": {
+								"example": {
+									"success": false,
+									"message": "Internal server error."
+								}
+							}
+						}
+					}
+				}
+			}
 		}
 	},
 	"components": {
+		"securitySchemes": {
+			"bearerAuth": {
+				"type": "http",
+				"scheme": "bearer",
+				"bearerFormat": "JWT"
+			}
+		},
 		"schemas": {
 			"UserRegistration": {
 				"type": "object",
@@ -587,8 +882,8 @@
 						"example": "INDIVIDUAL"
 					},
 					"accountBalance": {
-						"type": "number",
-						"example": 100
+						"type": "string",
+						"example": "5000000"
 					},
 					"accountStatus": {
 						"type": "string",
@@ -605,6 +900,42 @@
 					"accountBalance",
 					"accountStatus"
 				]
+			},
+			"Transaction": {
+				"Transaction": {
+					"type": "object",
+					"properties": {
+						"user": {
+							"type": "string",
+							"format": "uuid",
+							"example": "64d3eee57125bc5ce5f6a7ee"
+						},
+						"beneficiary": {
+							"type": "string",
+							"format": "uuid",
+							"example": "64d3eee57125bc5ce5f6a7ee"
+						},
+						"userAccountNumber": {
+							"type": "string",
+							"example": "5869945965"
+						},
+						"beneficiaryAccountNumber": {
+							"type": "string",
+							"example": "4632034279"
+						},
+						"amount": {
+							"type": "string",
+							"example": "250000"
+						}
+					},
+					"required": [
+						"user",
+						"beneficiary",
+						"userAccountNumber",
+						"beneficiaryAccountNumber",
+						"amount"
+					]
+				}
 			}
 		}
 	}

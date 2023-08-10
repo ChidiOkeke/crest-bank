@@ -1,7 +1,7 @@
 import { Request } from "express";
 import { generateAccountNumber } from "../../utils/index.util";
 import { accountNumberMax, accountNumberMin, maxRetries, userFieldsToSelectForLogin } from "../../constants/constants";
-import { UserModel, UserModelType } from "../../schemas/user.schema";
+import { UserModel, UserModelType } from "../../routes/schemas/user.schema";
 import { matchedData } from "express-validator";
 import bcrypt from "bcryptjs";
 import { errors, responses } from "../../utils/messages.util";
@@ -10,7 +10,7 @@ import redisService from "../redis/redis.service";
 import { RefreshPayload } from "../../types/index.types";
 import { inject, injectable } from "tsyringe";
 import FormatResponse from "../../utils/responses.util";
-import { AccountModelType } from "../../schemas/accounts.schema";
+import { AccountModelType } from "../../routes/schemas/accounts.schema";
 import mongoose from "mongoose";
 
 @injectable()

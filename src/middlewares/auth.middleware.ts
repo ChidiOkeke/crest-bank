@@ -34,7 +34,7 @@ class AuthMiddleware {
 
     try {
       const secret = process.env.JWT_SECRET as string;
-      req.body.user = jwt.verify(token, secret);
+      jwt.verify(token, secret);
 
       return next();
     } catch (error) {

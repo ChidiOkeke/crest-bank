@@ -1,5 +1,5 @@
 import AuthService from '../../services/auth/auth.service';
-import User, { UserModelType } from '../../schemas/user.schema';
+import User, { UserModelType } from '../schemas/user.schema';
 import { container } from "tsyringe";
 import AuthController from '../../controllers/auth/auth.controller';
 import AuthMiddleware from '../../middlewares/auth.middleware';

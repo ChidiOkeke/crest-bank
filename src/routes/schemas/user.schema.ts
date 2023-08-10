@@ -1,5 +1,5 @@
 import { Model, model, Schema, Types } from "mongoose";
-import { AccountStatus, AccountType, UserRoles } from "../types/index.types";
+import { AccountStatus, AccountType, UserRoles } from "../../types/index.types";
 
 
 export interface UserModel extends Document {

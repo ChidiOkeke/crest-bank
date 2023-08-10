@@ -1,5 +1,5 @@
 import mongoose, { Model, model, Schema } from "mongoose";
-import { defaultTransferAmount } from "../constants/constants";
+import { defaultTransferAmount } from "../../constants/constants";
 
 export interface TransactionModel extends Document {
   user: string;

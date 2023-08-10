@@ -13,7 +13,7 @@ const checkCreateAccountPermission = authMiddleware.hasPermission(AuthorizationA
 
 router.post(
 	"/",
-	// authMiddleware.requiresAuth,
+	authMiddleware.requiresAuth,
 	createAccountValidator,
 	checkRequestErrors,
 	checkCreateAccountPermission,

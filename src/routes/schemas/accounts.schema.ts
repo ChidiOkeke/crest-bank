@@ -1,6 +1,6 @@
 import mongoose, { Model, model, Schema } from "mongoose";
-import { AccountStatus, AccountType } from "../types/index.types";
-import { accountOpeningDefaultBanalce } from "../constants/constants";
+import { AccountStatus, AccountType } from "../../types/index.types";
+import { accountOpeningDefaultBanalce } from "../../constants/constants";
 
 
 export interface AccountModel extends Document {

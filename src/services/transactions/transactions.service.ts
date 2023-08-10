@@ -1,12 +1,12 @@
 import { Request } from "express";
 import { matchedData } from "express-validator";
 import { errors, responses } from "../../utils/messages.util";
-import { UserModelType } from "../../schemas/user.schema";
+import { UserModelType } from "../../routes/schemas/user.schema";
 import { inject, injectable } from "tsyringe";
-import { TransactionModelType } from "../../schemas/transaction.schema";
+import { TransactionModelType } from "../../routes/schemas/transaction.schema";
 import FormatResponse from "../../utils/responses.util";
 import { canTransfer, totalPages } from "../../utils/index.util";
-import { AccountModelType } from "../../schemas/accounts.schema";
+import { AccountModelType } from "../../routes/schemas/accounts.schema";
 import mongoose from "mongoose";
 import { ObjectId } from "mongodb";
 import { TransactionHistoryQuery, UserRoles } from "../../types/index.types";
@@ -170,7 +170,7 @@ class TransactionsService {
 		}
 
 		try {
-			
+
 			const history = await this.transactionModel
 				.find(query)
 				.skip((pageAsNumber - 1) * limitAsNumber)

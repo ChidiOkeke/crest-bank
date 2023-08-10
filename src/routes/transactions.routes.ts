@@ -15,16 +15,16 @@ const checkViewTransactionHistoryPermission = authMiddleware.hasPermission(Autho
 
 router.post(
   "/transfer",
-  // authMiddleware.requiresAuth,
+  authMiddleware.requiresAuth,
   transferValidator,
   checkRequestErrors,
   checkInitiateTransferPermission,
   transactionsController.transfer
 );
 
-router.get(
+router.post(
   "/history",
-  // authMiddleware.requiresAuth,
+  authMiddleware.requiresAuth,
   historyValidator,
   checkRequestErrors,
   checkViewTransactionHistoryPermission,

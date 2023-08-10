@@ -5,7 +5,7 @@ import {
 import { AccountStatus, Tokens } from "../types/index.types";
 import { minimumAllowedBalanceForTransfers } from "../constants/constants";
 import { errors } from "./messages.util";
-import { AccountModel } from "../schemas/accounts.schema";
+import { AccountModel } from "../routes/schemas/accounts.schema";
 import httpStatus from "http-status";
 
 export const messageLogger = (error: string | null, success: string) => {
