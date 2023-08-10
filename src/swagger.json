@@ -1,15 +1,22 @@
 {
 	"openapi": "3.0.0",
 	"info": {
-		"title": "User Registration API",
-		"description": "API for registering users",
+		"title": "Crest Bank API",
+		"description": "A basic banking API with Express.js and MongoDB",
 		"version": "1.0.0"
 	},
 	"servers": [
 		{
-			"url": "//localhost:3000/api"
+			"description": "Local development server",
+			"url": "http://localhost:3000/api"
+			
+		},
+		{
+			"url": "http://crest-bank.onrender.com/api",
+			"description": "Production server"
 		}
 	],
+	"default": "http://crest-bank.onrender.com/api" ,
 	"paths": {
 		"/v1/auth/register": {
 			"post": {
