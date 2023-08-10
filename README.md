@@ -31,7 +31,7 @@ Before you begin, ensure you have the following installed:
    yarn install
    ```
 
-3. Create a .env.dev fnd .env.dist files in the root directory and set your environment variables. You can use the .env.example file as a reference.
+3. Create .env.dev and .env.dist files in the root directory and set your environment variables. You can use the .env.example file as a reference.
 
 ### Running the Server
 
@@ -58,3 +58,7 @@ yarn start
 ### API Documentation
 
 Access the Swagger API documentation by visiting http://localhost:3000/docs in your web browser. This documentation provides detailed information about available routes and endpoints.
+
+Select the appropriate server from the list of servers available.
+
+
