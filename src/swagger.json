@@ -15,7 +15,7 @@
 			"url": "http://localhost:3000/api"
 		}	
 	],
-	"default": "http://crest-bank.onrender.com/api",
+	"default": "https://crest-bank.onrender.com/api",
 	"paths": {
 		"/v1/auth/register": {
 			"post": {
@@ -76,8 +76,20 @@
 							"application/json": {
 								"example": {
 									"success": true,
-									"message": "User registration successful."
-								}
+									"message": "User registration successful",
+									"data": {
+									  "role": "CUSTOMER",
+									  "email": "customer@example.com",
+									  "password": null,
+									  "phoneNumber": "2349023454388",
+									  "firstName": "Michael",
+									  "lastName": "Peterson",
+									  "businessName": "Mike's Apparel",
+									  "_id": "64d5285f5bd2dd4b1dc65a19",
+									  "createdAt": "2023-08-10T18:11:43.920Z",
+									  "updatedAt": "2023-08-10T18:11:43.920Z"
+									}
+								  }
 							}
 						}
 					},
