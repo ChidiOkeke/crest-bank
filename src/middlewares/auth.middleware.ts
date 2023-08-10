@@ -49,9 +49,8 @@ class AuthMiddleware {
   hasPermission = (action: string, asset: string) => {
     return async (req: Request, res: Response, next: NextFunction) => {
       try {
-        
 
-        if(!this.rbacPolicyInitialized){ //init only once
+        if (!this.rbacPolicyInitialized) { //init only once
           await policy.init();
           this.rbacPolicyInitialized = true;
         }
@@ -67,12 +66,12 @@ class AuthMiddleware {
           next(); // proceed if authorized
         } else {
           res.status(httpStatus.FORBIDDEN).json({
-              success: status.failed,
-              message: errors.forbiddenResource
-            });
+            success: status.failed,
+            message: errors.forbiddenResource
+          });
         }
       } catch (error) {
-        console.error({error})
+        console.error({ error })
         res.status(httpStatus.FORBIDDEN).json({
           success: status.failed,
           message: errors.forbiddenResource
