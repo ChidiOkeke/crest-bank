@@ -7,7 +7,8 @@ export const userFieldsToSelectForLogin = [
   "accountType",
   "accountStatus",
   "password",
-  "accountNumber"
+  "accountNumber",
+  "role"
 ];
 
 export const userFieldsToSelectForTransfer = [
@@ -18,7 +19,8 @@ export const userFieldsToSelectForTransfer = [
   "businessName",
   "accountType",
   "accountStatus",
-  "accountNumber"
+  "accountNumber",
+  "role"
 ];
 
 export const accountNumberMin = 1000000000;
