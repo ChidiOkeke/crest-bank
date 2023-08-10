@@ -9,14 +9,13 @@
 		{
 			"description": "Local development server",
 			"url": "http://localhost:3000/api"
-			
 		},
 		{
 			"url": "http://crest-bank.onrender.com/api",
 			"description": "Production server"
 		}
 	],
-	"default": "http://crest-bank.onrender.com/api" ,
+	"default": "http://crest-bank.onrender.com/api",
 	"paths": {
 		"/v1/auth/register": {
 			"post": {
@@ -909,40 +908,38 @@
 				]
 			},
 			"Transaction": {
-				"Transaction": {
-					"type": "object",
-					"properties": {
-						"user": {
-							"type": "string",
-							"format": "uuid",
-							"example": "64d3eee57125bc5ce5f6a7ee"
-						},
-						"beneficiary": {
-							"type": "string",
-							"format": "uuid",
-							"example": "64d3eee57125bc5ce5f6a7ee"
-						},
-						"userAccountNumber": {
-							"type": "string",
-							"example": "5869945965"
-						},
-						"beneficiaryAccountNumber": {
-							"type": "string",
-							"example": "4632034279"
-						},
-						"amount": {
-							"type": "string",
-							"example": "250000"
-						}
+				"type": "object",
+				"properties": {
+					"user": {
+						"type": "string",
+						"format": "uuid",
+						"example": "64d3eee57125bc5ce5f6a7ee"
 					},
-					"required": [
-						"user",
-						"beneficiary",
-						"userAccountNumber",
-						"beneficiaryAccountNumber",
-						"amount"
-					]
-				}
+					"beneficiary": {
+						"type": "string",
+						"format": "uuid",
+						"example": "64d3eee57125bc5ce5f6a7ee"
+					},
+					"userAccountNumber": {
+						"type": "string",
+						"example": "5869945965"
+					},
+					"beneficiaryAccountNumber": {
+						"type": "string",
+						"example": "4632034279"
+					},
+					"amount": {
+						"type": "string",
+						"example": "250000"
+					}
+				},
+				"required": [
+					"user",
+					"beneficiary",
+					"userAccountNumber",
+					"beneficiaryAccountNumber",
+					"amount"
+				]
 			}
 		}
 	}
