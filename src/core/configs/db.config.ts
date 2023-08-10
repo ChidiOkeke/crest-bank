@@ -21,6 +21,8 @@ const dbConnection = async () => {
     throw error;
   }
 };
+export default dbConnection;
+
 
 export const redisConfig = {
   password: process.env.REDIS_PASSWORD,
@@ -30,4 +32,3 @@ export const redisConfig = {
   }
 }
 
-export default dbConnection;
