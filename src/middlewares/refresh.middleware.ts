@@ -4,15 +4,11 @@ import { NextFunction, Request, Response } from "express";
 import httpStatus from "http-status";
 import { errors } from "../utils/messages.util.js";
 import { JwtDecodedOptions } from "../types/index.types.js";
-import { formatResponse } from "../utils/index.util.js";
+import FormatResponse from "../utils/responses.util.js";
 
 export default async (req: Request, res: Response, next: NextFunction) => {
   if (!req.body.refresh) {
-    const { statusCode, body } = formatResponse(
-      httpStatus.BAD_REQUEST,
-      errors.refreshTokenNotPresent,
-      false
-    );
+    const { statusCode, body } = FormatResponse.badRequest(errors.refreshTokenNotPresent)
     return res.status(statusCode).json(body);
   }
   const token = req.body.refresh;
@@ -26,33 +22,21 @@ export default async (req: Request, res: Response, next: NextFunction) => {
       decoded.aud !== process.env.JWT_AUDIENCE ||
       decoded.iss !== process.env.JWT_ISSUER
     ) {
-      const { statusCode, body } = formatResponse(
-        httpStatus.UNAUTHORIZED,
-        errors.invalidTokenType,
-        false
-      );
+      const { statusCode, body } = FormatResponse.unauthorized(errors.invalidTokenType,)
       return res.status(statusCode).json(body);
     }
 
     const value = await redisService.get(token);
 
     if (value) {
-      const { statusCode, body } = formatResponse(
-        httpStatus.UNAUTHORIZED,
-        errors.refreshTokenUsed,
-        false
-      );
+      const { statusCode, body } = FormatResponse.unauthorized(errors.refreshTokenUsed,)
       return res.status(statusCode).json(body);
     }
 
     next();
   } catch (error) {
     console.error(error);
-    const { statusCode, body } = formatResponse(
-      httpStatus.UNAUTHORIZED,
-      errors.invalidJwtToken,
-      false
-    );
+    const { statusCode, body } = FormatResponse.unauthorized(errors.invalidJwtToken)
     return res.status(statusCode).json(body);
   }
 };

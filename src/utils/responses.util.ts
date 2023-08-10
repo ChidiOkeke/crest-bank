@@ -60,6 +60,17 @@ class FormatResponse {
       }
     };
   }
+
+  static unauthorized(message= errors.badRequest, statusCode = httpStatus.UNAUTHORIZED) {
+
+    return {
+      statusCode,
+      body: {
+        success: status.failed,
+        message,
+      }
+    };
+  }
 }
 
 export default FormatResponse;

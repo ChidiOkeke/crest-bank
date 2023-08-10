@@ -1,15 +1,14 @@
 
 import { createClient } from "redis";
-import { formatResponse } from "../../utils/index.util";
-import httpStatus from "http-status";
-import { errors } from "../../utils/messages.util";
+import FormatResponse from "../../utils/responses.util";
+import { redisConfig } from "../../core/configs/db.config";
 
 class RedisService {
 
   client;
 
   constructor() {
-    this.client = createClient();
+    this.client = createClient(redisConfig);
   }
 
   set = async ({ key, value, timeType, time }: any) => {
@@ -20,7 +19,7 @@ class RedisService {
       await this.client.disconnect();
     } catch (error) {
       console.error({ error });
-      return formatResponse(httpStatus.INTERNAL_SERVER_ERROR, errors.internalServerError, false);
+      FormatResponse.internalServerError()
     }
 
   }
@@ -33,7 +32,7 @@ class RedisService {
       return result;
     } catch (error) {
       console.error({ error });
-      return formatResponse(httpStatus.INTERNAL_SERVER_ERROR, errors.internalServerError, false);
+      FormatResponse.internalServerError()
     }
 
   }

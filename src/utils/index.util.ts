@@ -16,25 +16,6 @@ export const messageLogger = (error: string | null, success: string) => {
   }
 };
 
-export const formatResponse = (
-  statusCode: number,
-  message: string,
-  success: boolean,
-  data?: any,
-  tokens?: Tokens,
-) => {
-  return {
-    statusCode,
-    body: {
-      success,
-      message,
-      data,
-      tokens,
-    }
-  };
-}
-
-
 export const checkRequestErrors: RequestHandler = (
   req: Request,
   res: Response,
