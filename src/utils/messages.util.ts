@@ -29,7 +29,8 @@ export const errors = {
     invalidAmount: 'Invalid transfer amount',
     transactionFailed: 'Transaction failed',
     invalidBodyRequest: 'Invalid body request',
-    inactiveAccount: 'This account is not enabled for this transaction'
+    inactiveAccount: 'This account is not enabled for this transaction',
+    resourceNotFound: 'Resource not found'
 };
 
 export const responses = {
